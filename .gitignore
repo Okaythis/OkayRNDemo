@@ -115,3 +115,7 @@ package-lock.json
 
 # Android memory profiler files
 *.hprof
+
+android/app/google-services.json
+custom_modules/OkayRNModule/
+

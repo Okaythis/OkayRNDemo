@@ -37,6 +37,9 @@ allprojects {
             url "https://gitlab.okaythis.com/api/v4/projects/15/packages/maven"
             name "GitLab"
         }
+        maven {
+            url 'https://storage.googleapis.com/download.flutter.io'
+        }
 
         google()
     }
