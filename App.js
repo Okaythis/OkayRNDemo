@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   SafeAreaView,
@@ -10,86 +9,104 @@ import {
   Platform,
 } from 'react-native';
 
-import {RNOkaySdk} from 'react-native-okay-sdk'
-import messaging from '@react-native-firebase/messaging'
+import {RNOkaySdk} from 'react-native-okay-sdk';
+import messaging from '@react-native-firebase/messaging';
 
-const pubPssBase64 = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxgyacF1NNWTA6rzCrtK60se9fVpTPe3HiDjHB7MybJvNdJZIgZbE9k3gQ6cdEYgTOSG823hkJCVHZrcf0/AK7G8Xf/rjhWxccOEXFTg4TQwmhbwys+sY/DmGR8nytlNVbha1DV/qOGcqAkmn9SrqW76KK+EdQFpbiOzw7RRWZuizwY3BqRfQRokr0UBJrJrizbT9ZxiVqGBwUDBQrSpsj3RUuoj90py1E88ExyaHui+jbXNITaPBUFJjbas5OOnSLVz6GrBPOD+x0HozAoYuBdoztPRxpjoNIYvgJ72wZ3kOAVPAFb48UROL7sqK2P/jwhdd02p/MDBZpMl/+BG+qQIDAQAB'
+let deviceToken;
+let installationID = Platform.OS === 'android' ? '9990' : '9980';
+const pubPssBase64 =
+  'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxgyacF1NNWTA6rzCrtK60se9fVpTPe3HiDjHB7MybJvNdJZIgZbE9k3gQ6cdEYgTOSG823hkJCVHZrcf0/AK7G8Xf/rjhWxccOEXFTg4TQwmhbwys+sY/DmGR8nytlNVbha1DV/qOGcqAkmn9SrqW76KK+EdQFpbiOzw7RRWZuizwY3BqRfQRokr0UBJrJrizbT9ZxiVqGBwUDBQrSpsj3RUuoj90py1E88ExyaHui+jbXNITaPBUFJjbas5OOnSLVz6GrBPOD+x0HozAoYuBdoztPRxpjoNIYvgJ72wZ3kOAVPAFb48UROL7sqK2P/jwhdd02p/MDBZpMl/+BG+qQIDAQAB';
 const App = () => {
   const [linkingCode, setCode] = useState('');
   const [tenantId, setTenantId] = useState('');
   const [externalId, setExternalId] = useState('');
-  const [token, setToken] = useState('')
+  const [token, setToken] = useState('');
 
   useEffect(() => {
     if (Platform.OS === 'android') {
-      RNOkaySdk.permissionRequest()
-      RNOkaySdk.init("https://demostand.okaythis.com").then(response => {
-        console.log('init: ', response)
-      });
+      // RNOkaySdk.permissionRequest();
+      RNOkaySdk.initOkay({
+        initData: {
+          okayUrlEndpoint: 'https://stage.okaythis.com',
+        },
+      })
+        .then(response => {
+          console.log('init: ', response);
+        })
+        .catch(error => {
+          console.error('error: ', error);
+        });
 
       const unsubscribe = messaging().onMessage(message => {
         console.log('message: ', message);
+        let data = JSON.parse(message.data.data);
+        console.log('Data: ', data.sessionId);
+        RNOkaySdk.startAuthorization({
+          SpaAuthorizationData: {
+            sessionId: data.sessionId,
+            appPns: deviceToken,
+            pageTheme: null,
+          },
+        });
       });
       return unsubscribe;
     }
-  }, [])
+  }, []);
 
-  const enrollDevice = async() => {
+  const enrollDevice = async () => {
     try {
-      const deviceToken = await messaging().getToken()
-      setToken(deviceToken)
-      console.log('token: ', deviceToken)
-      const response = await RNOkaySdk.enrollProcedure({
+      deviceToken = await messaging().getToken();
+      setToken(deviceToken);
+      console.log('token: ', deviceToken);
+      const response = await RNOkaySdk.startEnrollment({
         SpaEnrollData: {
-          host: "https://demostand.okaythis.com", // Okay server address
+          host: 'https://stage.okaythis.com', // Okay server address
           appPns: deviceToken,
-          pubPss: pubPssBase64, 
-          installationId: "9990", 
-        }
-      })
-      console.log('ext: ', response.externalId);
-      setExternalId(response.externalId);
-    } catch(error) {
+          pubPss: pubPssBase64,
+          enrollInBackground: false,
+          installationId: installationID,
+        },
+      });
+      console.log('ext: ', response);
+      let parsedData = JSON.parse(response);
+      setExternalId(parsedData.externalId);
+    } catch (error) {
       console.error('error: ', error);
     }
-  }
+  };
 
-  const linkDevice = async() => {
-    try{
-      const linkResult = await RNOkaySdk.linkTenant(
-        linkingCode,
-        {
-          SpaStorage: {
-            appPns: token,
-            pubPss: pubPssBase64,
-            externalId: externalId,
-            installationId: "9990",
-            enrollmentId: null
-          }
-        })
-      console.log('linkResult: ', linkResult)
-    } catch(error) {
-      console.error(error);
-    }
-  }
-  const unlinkDevice = async() => {
+  const linkDevice = async () => {
     try {
-      const unlinkResult = await RNOkaySdk.unlinkTenant(
-        tenantId,
-        {
-          SpaStorage: {
-            appPns: token,
-            pubPss: pubPssBase64,
-            externalId: externalId,
-            installationId: "9990",
-            enrollmentId: null
-          }
-      })
-      console.log('unlinkRes: ', unlinkResult);
-    } catch(error) {
+      const linkResult = await RNOkaySdk.linkTenant(linkingCode, {
+        SpaStorage: {
+          appPns: token,
+          pubPss: pubPssBase64,
+          externalId: externalId,
+          installationId: installationID,
+          enrollmentId: null,
+        },
+      });
+      console.log('linkResult: ', linkResult);
+    } catch (error) {
       console.error(error);
     }
-  }
+  };
+  const unlinkDevice = async () => {
+    try {
+      const unlinkResult = await RNOkaySdk.unlinkTenant(tenantId, {
+        SpaStorage: {
+          appPns: token,
+          pubPss: pubPssBase64,
+          externalId: externalId,
+          installationId: installationID,
+          enrollmentId: null,
+        },
+      });
+      console.log('unlinkRes: ', unlinkResult);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <SafeAreaView>
       <Text>Your externalId: {externalId}</Text>
@@ -123,7 +140,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: '80%'
+    height: '80%',
   },
   button: {
     width: 200,
@@ -131,12 +148,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'blue',
     color: 'white',
     justifyContent: 'center',
-    margin: 10
+    margin: 10,
   },
   buttonText: {
     color: 'white',
-    alignSelf: 'center'
-  }
+    alignSelf: 'center',
+  },
 });
 
 export default App;
