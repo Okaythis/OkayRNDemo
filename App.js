@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 
-import {RNOkaySdk} from 'react-native-okay-sdk';
+import {OkaySdk} from 'react-native-okay-sdk';
 import messaging from '@react-native-firebase/messaging';
 
 let deviceToken;
@@ -24,8 +24,8 @@ const App = () => {
 
   useEffect(() => {
     if (Platform.OS === 'android') {
-      // RNOkaySdk.permissionRequest();
-      RNOkaySdk.initOkay({
+      // OkaySdk.permissionRequest();
+      OkaySdk.initOkay({
         initData: {
           okayUrlEndpoint: 'https://stage.okaythis.com',
         },
@@ -37,17 +37,18 @@ const App = () => {
           console.error('error: ', error);
         });
 
-      const unsubscribe = messaging().onMessage(message => {
+      const unsubscribe = messaging().onMessage(async message => {
         console.log('message: ', message);
         let data = JSON.parse(message.data.data);
         console.log('Data: ', data.sessionId);
-        RNOkaySdk.startAuthorization({
+        let response = await OkaySdk.startAuthorization({
           SpaAuthorizationData: {
             sessionId: data.sessionId,
             appPns: deviceToken,
             pageTheme: null,
           },
         });
+        console.log(response);
       });
       return unsubscribe;
     }
@@ -58,12 +59,12 @@ const App = () => {
       deviceToken = await messaging().getToken();
       setToken(deviceToken);
       console.log('token: ', deviceToken);
-      const response = await RNOkaySdk.startEnrollment({
+      const response = await OkaySdk.startEnrollment({
         SpaEnrollData: {
           host: 'https://stage.okaythis.com', // Okay server address
           appPns: deviceToken,
           pubPss: pubPssBase64,
-          enrollInBackground: false,
+          enrollInBackground: true,
           installationId: installationID,
         },
       });
@@ -77,7 +78,7 @@ const App = () => {
 
   const linkDevice = async () => {
     try {
-      const linkResult = await RNOkaySdk.linkTenant(linkingCode, {
+      const linkResult = await OkaySdk.linkTenant(linkingCode, {
         SpaStorage: {
           appPns: token,
           pubPss: pubPssBase64,
@@ -93,7 +94,7 @@ const App = () => {
   };
   const unlinkDevice = async () => {
     try {
-      const unlinkResult = await RNOkaySdk.unlinkTenant(tenantId, {
+      const unlinkResult = await OkaySdk.unlinkTenant(tenantId, {
         SpaStorage: {
           appPns: token,
           pubPss: pubPssBase64,
