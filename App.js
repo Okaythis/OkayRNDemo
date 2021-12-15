@@ -37,17 +37,18 @@ const App = () => {
           console.error('error: ', error);
         });
 
-      const unsubscribe = messaging().onMessage(message => {
+      const unsubscribe = messaging().onMessage(async message => {
         console.log('message: ', message);
         let data = JSON.parse(message.data.data);
         console.log('Data: ', data.sessionId);
-        RNOkaySdk.startAuthorization({
+        let response = await RNOkaySdk.startAuthorization({
           SpaAuthorizationData: {
             sessionId: data.sessionId,
             appPns: deviceToken,
             pageTheme: null,
           },
         });
+        console.log(response);
       });
       return unsubscribe;
     }
@@ -63,7 +64,7 @@ const App = () => {
           host: 'https://stage.okaythis.com', // Okay server address
           appPns: deviceToken,
           pubPss: pubPssBase64,
-          enrollInBackground: false,
+          enrollInBackground: true,
           installationId: installationID,
         },
       });
