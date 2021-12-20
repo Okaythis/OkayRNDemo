@@ -27,7 +27,7 @@ const App = () => {
       // OkaySdk.permissionRequest();
       OkaySdk.initOkay({
         initData: {
-          okayUrlEndpoint: 'https://stage.okaythis.com',
+          okayUrlEndpoint: 'https://epayments.okaythis.com',
         },
       })
         .then(response => {
@@ -36,22 +36,22 @@ const App = () => {
         .catch(error => {
           console.error('error: ', error);
         });
-
-      const unsubscribe = messaging().onMessage(async message => {
-        console.log('message: ', message);
-        let data = JSON.parse(message.data.data);
-        console.log('Data: ', data.sessionId);
-        let response = await OkaySdk.startAuthorization({
-          SpaAuthorizationData: {
-            sessionId: data.sessionId,
-            appPns: deviceToken,
-            pageTheme: null,
-          },
-        });
-        console.log(response);
-      });
-      return unsubscribe;
     }
+
+    const unsubscribe = messaging().onMessage(async message => {
+      console.log('message: ', message);
+      let data = JSON.parse(message.data.data);
+      console.log('Data: ', data.sessionId);
+      let response = await OkaySdk.startAuthorization({
+        SpaAuthorizationData: {
+          sessionId: data.sessionId,
+          appPns: deviceToken,
+          pageTheme: null,
+        },
+      });
+      console.log(response);
+    });
+    return unsubscribe;
   }, []);
 
   const enrollDevice = async () => {
