@@ -13,6 +13,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		6EDC966CD003C6EA4E5A33C5 /* libPods-OkayRNDemo-OkayRNDemoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8974F7EA1B833255C8E6F2CD /* libPods-OkayRNDemo-OkayRNDemoTests.a */; };
 		784BF84E27734752003F9E74 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 784BF84D27734752003F9E74 /* GoogleService-Info.plist */; };
+		78D11DFA277B5381007772F6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 78D11DF9277B5381007772F6 /* GoogleService-Info.plist */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		9C754541B740B78D111B726F /* libPods-OkayRNDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D93222690B385695656ECCBE /* libPods-OkayRNDemo.a */; };
 /* End PBXBuildFile section */
@@ -40,7 +41,7 @@
 		4281497B51AB493B8BC7DD50 /* Pods-OkayRNDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OkayRNDemo.debug.xcconfig"; path = "Target Support Files/Pods-OkayRNDemo/Pods-OkayRNDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		54C75D7A571C69509999B7D9 /* Pods-OkayRNDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OkayRNDemo.release.xcconfig"; path = "Target Support Files/Pods-OkayRNDemo/Pods-OkayRNDemo.release.xcconfig"; sourceTree = "<group>"; };
 		784BF8452770D077003F9E74 /* OkayRNDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = OkayRNDemo.entitlements; path = OkayRNDemo/OkayRNDemo.entitlements; sourceTree = "<group>"; };
-		784BF84D27734752003F9E74 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Documents/test/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		78D11DF9277B5381007772F6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = OkayRNDemo/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8974F7EA1B833255C8E6F2CD /* libPods-OkayRNDemo-OkayRNDemoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OkayRNDemo-OkayRNDemoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D858449BEE2DAA8A3D37B381 /* Pods-OkayRNDemo-OkayRNDemoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OkayRNDemo-OkayRNDemoTests.debug.xcconfig"; path = "Target Support Files/Pods-OkayRNDemo-OkayRNDemoTests/Pods-OkayRNDemo-OkayRNDemoTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -121,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				784BF84D27734752003F9E74 /* GoogleService-Info.plist */,
+				78D11DF9277B5381007772F6 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* OkayRNDemo */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* OkayRNDemoTests */,
@@ -249,6 +251,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				78D11DFA277B5381007772F6 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				784BF84E27734752003F9E74 /* GoogleService-Info.plist in Resources */,
 			);

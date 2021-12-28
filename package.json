@@ -15,7 +15,7 @@
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-builder-bob": "^0.18.2",
-    "react-native-okay-sdk": "file:../OkayRNModule"
+    "react-native-okay-sdk": "file:custom_modules/OkayRNModule"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

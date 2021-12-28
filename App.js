@@ -45,6 +45,23 @@ async function initAndroidSdk() {
     });
 }
 
+async function initIosSdk() {
+  requestUserPermission();
+  OkaySdk.initOkay({
+    initData: {
+      resourceProvider: {
+        biometricAlertReasonText: 'Test Alert'
+      }
+    },
+  })
+    .then(response => {
+      console.log('init: ', response);
+    })
+    .catch(error => {
+      console.error('error: ', error);
+    });
+}
+
 const App = () => {
   const [linkingCode, setCode] = useState('');
   const [tenantId, setTenantId] = useState('');
@@ -58,7 +75,7 @@ const App = () => {
         initAndroidSdk();
         break;
       case 'ios':
-        requestUserPermission();
+        initIosSdk();
         break;
     }
 
