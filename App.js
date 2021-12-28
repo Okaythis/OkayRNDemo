@@ -9,13 +9,42 @@ import {
   Platform,
 } from 'react-native';
 
-import {OkaySdk} from 'react-native-okay-sdk';
+import * as OkaySdk from 'react-native-okay-sdk';
 import messaging from '@react-native-firebase/messaging';
 
 let deviceToken;
 let installationID = Platform.OS === 'android' ? '9990' : '9980';
-const pubPssBase64 =
-  'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxgyacF1NNWTA6rzCrtK60se9fVpTPe3HiDjHB7MybJvNdJZIgZbE9k3gQ6cdEYgTOSG823hkJCVHZrcf0/AK7G8Xf/rjhWxccOEXFTg4TQwmhbwys+sY/DmGR8nytlNVbha1DV/qOGcqAkmn9SrqW76KK+EdQFpbiOzw7RRWZuizwY3BqRfQRokr0UBJrJrizbT9ZxiVqGBwUDBQrSpsj3RUuoj90py1E88ExyaHui+jbXNITaPBUFJjbas5OOnSLVz6GrBPOD+x0HozAoYuBdoztPRxpjoNIYvgJ72wZ3kOAVPAFb48UROL7sqK2P/jwhdd02p/MDBZpMl/+BG+qQIDAQAB';
+const pubPssBase64 = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxgyacF1NNWTA6rzCrtK60se9fVpTPe3HiDjHB7MybJvNdJZIgZbE9k3gQ6cdEYgTOSG823hkJCVHZrcf0/AK7G8Xf/rjhWxccOEXFTg4TQwmhbwys+sY/DmGR8nytlNVbha1DV/qOGcqAkmn9SrqW76KK+EdQFpbiOzw7RRWZuizwY3BqRfQRokr0UBJrJrizbT9ZxiVqGBwUDBQrSpsj3RUuoj90py1E88ExyaHui+jbXNITaPBUFJjbas5OOnSLVz6GrBPOD+x0HozAoYuBdoztPRxpjoNIYvgJ72wZ3kOAVPAFb48UROL7sqK2P/jwhdd02p/MDBZpMl/+BG+qQIDAQAB'
+
+async function requestUserPermission() {
+  const authStatus = await messaging().requestPermission();
+  console.log('status: ', authStatus);
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  if (enabled) {
+    console.log('Authorization status:', authStatus);
+    messaging().getToken().then(token => {
+      console.log('token: ', token);
+      OkaySdk.updateDeviceToken(token || '');
+    })
+  }
+}
+
+async function initAndroidSdk() {
+  OkaySdk.initOkay({
+    initData: {
+      okayUrlEndpoint: 'https://stage.okaythis.com',
+    },
+  })
+    .then(response => {
+      console.log('init: ', response);
+    })
+    .catch(error => {
+      console.error('error: ', error);
+    });
+}
+
 const App = () => {
   const [linkingCode, setCode] = useState('');
   const [tenantId, setTenantId] = useState('');
@@ -23,19 +52,14 @@ const App = () => {
   const [token, setToken] = useState('');
 
   useEffect(() => {
-    if (Platform.OS === 'android') {
-      // OkaySdk.permissionRequest();
-      OkaySdk.initOkay({
-        initData: {
-          okayUrlEndpoint: 'https://epayments.okaythis.com',
-        },
-      })
-        .then(response => {
-          console.log('init: ', response);
-        })
-        .catch(error => {
-          console.error('error: ', error);
-        });
+    console.log('sdk: ', OkaySdk);
+    switch(Platform.OS) {
+      case 'android':
+        initAndroidSdk();
+        break;
+      case 'ios':
+        requestUserPermission();
+        break;
     }
 
     const unsubscribe = messaging().onMessage(async message => {
@@ -56,6 +80,7 @@ const App = () => {
 
   const enrollDevice = async () => {
     try {
+      console.log('get token');
       deviceToken = await messaging().getToken();
       setToken(deviceToken);
       console.log('token: ', deviceToken);

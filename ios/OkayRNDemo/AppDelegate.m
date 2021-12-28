@@ -1,6 +1,6 @@
 #import "AppDelegate.h"
-#import <Firebase.h>
 #import <UserNotifications/UserNotifications.h>
+@import Firebase;
 
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>

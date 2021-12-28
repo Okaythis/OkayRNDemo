@@ -7,14 +7,13 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint .",
-    "prepare": "cd node_modules/react-native-okay-sdk && bob build"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@react-native-firebase/app": "^13.0.1",
     "@react-native-firebase/messaging": "^13.0.1",
-    "react": "17.0.2",
-    "react-native": "0.66.3",
+    "react": "16.13.1",
+    "react-native": "0.63.4",
     "react-native-builder-bob": "^0.18.2",
     "react-native-okay-sdk": "file:../OkayRNModule"
   },
