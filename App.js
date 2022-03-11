@@ -34,7 +34,7 @@ async function requestUserPermission() {
 async function initAndroidSdk() {
   OkaySdk.initOkay({
     initData: {
-      okayUrlEndpoint: 'https://stage.okaythis.com',
+      okayUrlEndpoint: 'https://demostand.okaythis.com',
     },
   })
     .then(response => {
@@ -103,7 +103,7 @@ const App = () => {
       console.log('token: ', deviceToken);
       const response = await OkaySdk.startEnrollment({
         SpaEnrollData: {
-          host: 'https://stage.okaythis.com', // Okay server address
+          host: 'https://demostand.okaythis.com', // Okay server address
           appPns: deviceToken,
           pubPss: pubPssBase64,
           enrollInBackground: true,
