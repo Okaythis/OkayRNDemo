@@ -6360,7 +6360,7 @@ react-native-builder-bob@^0.18.2:
   optionalDependencies:
     jetifier "^1.6.6"
 
-"react-native-okay-sdk@file:../OkayRNModule":
+"react-native-okay-sdk@file:custom_modules/OkayRNModule":
   version "0.1.0"
   dependencies:
     global "^4.4.0"
