@@ -33,9 +33,7 @@ async function requestUserPermission() {
 
 async function initAndroidSdk() {
   OkaySdk.initOkay({
-    initData: {
-      okayUrlEndpoint: 'https://stage.okaythis.com',
-    },
+      okayUrlEndpoint: 'https://demostand.okaythis.com',
   })
     .then(response => {
       console.log('init: ', response);
@@ -48,11 +46,9 @@ async function initAndroidSdk() {
 async function initIosSdk() {
   requestUserPermission();
   OkaySdk.initOkay({
-    initData: {
       resourceProvider: {
         biometricAlertReasonText: 'Test Alert'
       }
-    },
   })
     .then(response => {
       console.log('init: ', response);
@@ -84,11 +80,9 @@ const App = () => {
       let data = JSON.parse(message.data.data);
       console.log('Data: ', data.sessionId);
       let response = await OkaySdk.startAuthorization({
-        SpaAuthorizationData: {
           sessionId: data.sessionId,
           appPns: deviceToken,
           pageTheme: null,
-        },
       });
       console.log(response);
     });
@@ -102,17 +96,15 @@ const App = () => {
       setToken(deviceToken);
       console.log('token: ', deviceToken);
       const response = await OkaySdk.startEnrollment({
-        SpaEnrollData: {
-          host: 'https://stage.okaythis.com', // Okay server address
           appPns: deviceToken,
           pubPss: pubPssBase64,
           enrollInBackground: true,
           installationId: installationID,
-        },
       });
       console.log('ext: ', response);
-      let parsedData = JSON.parse(response);
-      setExternalId(parsedData.externalId);
+      // let parsedData = JSON.parse(response);
+      // setExternalId(parsedData.externalId);
+      setExternalId(response.externalId);
     } catch (error) {
       console.error('error: ', error);
     }
@@ -121,13 +113,11 @@ const App = () => {
   const linkDevice = async () => {
     try {
       const linkResult = await OkaySdk.linkTenant(linkingCode, {
-        SpaStorage: {
           appPns: token,
           pubPss: pubPssBase64,
           externalId: externalId,
           installationId: installationID,
           enrollmentId: null,
-        },
       });
       console.log('linkResult: ', linkResult);
     } catch (error) {
@@ -137,13 +127,11 @@ const App = () => {
   const unlinkDevice = async () => {
     try {
       const unlinkResult = await OkaySdk.unlinkTenant(tenantId, {
-        SpaStorage: {
           appPns: token,
           pubPss: pubPssBase64,
           externalId: externalId,
           installationId: installationID,
           enrollmentId: null,
-        },
       });
       console.log('unlinkRes: ', unlinkResult);
     } catch (error) {
