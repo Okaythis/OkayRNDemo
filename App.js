@@ -46,6 +46,7 @@ async function initAndroidSdk() {
 async function initIosSdk() {
   requestUserPermission();
   OkaySdk.initOkay({
+    okayUrlEndpoint: 'https://demostand.okaythis.com',
       resourceProvider: {
         biometricAlertReasonText: 'Test Alert'
       }

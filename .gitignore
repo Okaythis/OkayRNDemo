@@ -119,3 +119,4 @@ package-lock.json
 android/app/google-services.json
 custom_modules/OkayRNModule/
 
+/ios/OkayRNDemo/GoogleService-Info.plist
