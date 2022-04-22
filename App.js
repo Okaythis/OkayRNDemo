@@ -61,6 +61,12 @@ async function initIosSdk() {
     resourceProvider: {
       biometricAlertReasonText: 'Test Alert',
     },
+    fontConfig: [
+      {
+        fontVariant: 'FiraGO_200italic',
+        fontAssetPath: 'firago_eightitalic.ttf',
+      },
+    ],
   })
     .then(response => {
       console.log('init: ', response);
