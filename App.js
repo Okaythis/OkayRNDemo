@@ -14,7 +14,8 @@ import messaging from '@react-native-firebase/messaging';
 
 let deviceToken;
 let installationID = Platform.OS === 'android' ? '9990' : '9980';
-const pubPssBase64 = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxgyacF1NNWTA6rzCrtK60se9fVpTPe3HiDjHB7MybJvNdJZIgZbE9k3gQ6cdEYgTOSG823hkJCVHZrcf0/AK7G8Xf/rjhWxccOEXFTg4TQwmhbwys+sY/DmGR8nytlNVbha1DV/qOGcqAkmn9SrqW76KK+EdQFpbiOzw7RRWZuizwY3BqRfQRokr0UBJrJrizbT9ZxiVqGBwUDBQrSpsj3RUuoj90py1E88ExyaHui+jbXNITaPBUFJjbas5OOnSLVz6GrBPOD+x0HozAoYuBdoztPRxpjoNIYvgJ72wZ3kOAVPAFb48UROL7sqK2P/jwhdd02p/MDBZpMl/+BG+qQIDAQAB'
+const pubPssBase64 =
+  'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxgyacF1NNWTA6rzCrtK60se9fVpTPe3HiDjHB7MybJvNdJZIgZbE9k3gQ6cdEYgTOSG823hkJCVHZrcf0/AK7G8Xf/rjhWxccOEXFTg4TQwmhbwys+sY/DmGR8nytlNVbha1DV/qOGcqAkmn9SrqW76KK+EdQFpbiOzw7RRWZuizwY3BqRfQRokr0UBJrJrizbT9ZxiVqGBwUDBQrSpsj3RUuoj90py1E88ExyaHui+jbXNITaPBUFJjbas5OOnSLVz6GrBPOD+x0HozAoYuBdoztPRxpjoNIYvgJ72wZ3kOAVPAFb48UROL7sqK2P/jwhdd02p/MDBZpMl/+BG+qQIDAQAB';
 
 async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
@@ -24,18 +25,26 @@ async function requestUserPermission() {
     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
   if (enabled) {
     console.log('Authorization status:', authStatus);
-    messaging().getToken().then(token => {
-      console.log('token: ', token);
-      OkaySdk.updateDeviceToken(token || '');
-    })
+    messaging()
+      .getToken()
+      .then(token => {
+        console.log('token: ', token);
+        OkaySdk.updateDeviceToken(token || '');
+      });
   }
 }
 
 async function initAndroidSdk() {
+  //      buttonBackgroundColor: '#f9a825',
+  //       buttonTextColor: '#000000',
   OkaySdk.initOkay({
-    initData: {
-      okayUrlEndpoint: 'https://stage.okaythis.com',
-    },
+    okayUrlEndpoint: 'https://demostand.okaythis.com',
+    fontConfig: [
+      {
+        fontVariant: 'FiraGO_200italic',
+        fontAssetPath: 'fonts/firago_eightitalic.ttf',
+      },
+    ],
   })
     .then(response => {
       console.log('init: ', response);
@@ -48,10 +57,9 @@ async function initAndroidSdk() {
 async function initIosSdk() {
   requestUserPermission();
   OkaySdk.initOkay({
-    initData: {
-      resourceProvider: {
-        biometricAlertReasonText: 'Test Alert'
-      }
+    okayUrlEndpoint: 'https://demostand.okaythis.com',
+    resourceProvider: {
+      biometricAlertReasonText: 'Test Alert',
     },
   })
     .then(response => {
@@ -70,7 +78,7 @@ const App = () => {
 
   useEffect(() => {
     console.log('sdk: ', OkaySdk);
-    switch(Platform.OS) {
+    switch (Platform.OS) {
       case 'android':
         initAndroidSdk();
         break;
@@ -83,11 +91,44 @@ const App = () => {
       console.log('message: ', message);
       let data = JSON.parse(message.data.data);
       console.log('Data: ', data.sessionId);
+      console.log('Params: ', data.params.DEVICE_UI_TYPE);
       let response = await OkaySdk.startAuthorization({
-        SpaAuthorizationData: {
-          sessionId: data.sessionId,
-          appPns: deviceToken,
-          pageTheme: null,
+        deviceUiType: data.params.DEVICE_UI_TYPE,
+        sessionId: data.sessionId,
+        appPns: deviceToken,
+        pageTheme: {
+          screenBackgroundColor: '#ffffff',
+          actionBarBackgroundColor: '#004ba0',
+          actionBarTextColor: '#ffd95a',
+          pinNumberButtonTextColor: '#000000',
+          pinNumberButtonBackgroundColor: '#ffd95a',
+          pinRemoveButtonBackgroundColor: '#ffd95a',
+          pinRemoveButtonTextColor: '#000000',
+          pinTitleTextColor: '#ffffff',
+          pinValueTextColor: '#ffffff',
+          titleTextColor: '#ffd95a',
+          questionMarkColor: '#63a4ff',
+          transactionTypeTextColor: '#000000',
+          authInfoBackgroundColor: '#ffd95a',
+          infoSectionTitleColor: '#ffffff',
+          infoSectionValueColor: '#000000',
+          fromTextColor: '#000000',
+          messageTextColor: '#000000',
+          confirmButtonBackgroundColor: '#ffd95a',
+          confirmButtonTextColor: '#000000',
+          cancelButtonBackgroundColor: '#63a4ff',
+          cancelButtonTextColor: '#ffffff',
+          authConfirmationButtonBackgroundColor: '#f9a825',
+          authConfirmationButtonTextColor: '#000000',
+          authCancellationButtonBackgroundColor: '#1976d2',
+          authCancellationButtonTextColor: '#ffffff',
+          nameTextColor: '#000000',
+          buttonBackgroundColor: '#63a4ff',
+          buttonTextColor: '#ffffff',
+          inputTextColor: '#000000',
+          inputSelectionColor: '#00FF00',
+          inputErrorColor: '#FF0000',
+          inputDefaultColor: '#888888',
         },
       });
       console.log(response);
@@ -102,17 +143,15 @@ const App = () => {
       setToken(deviceToken);
       console.log('token: ', deviceToken);
       const response = await OkaySdk.startEnrollment({
-        SpaEnrollData: {
-          host: 'https://stage.okaythis.com', // Okay server address
-          appPns: deviceToken,
-          pubPss: pubPssBase64,
-          enrollInBackground: true,
-          installationId: installationID,
-        },
+        appPns: deviceToken,
+        pubPss: pubPssBase64,
+        enrollInBackground: true,
+        installationId: installationID,
       });
       console.log('ext: ', response);
-      let parsedData = JSON.parse(response);
-      setExternalId(parsedData.externalId);
+      // let parsedData = JSON.parse(response);
+      // setExternalId(parsedData.externalId);
+      setExternalId(response.externalId);
     } catch (error) {
       console.error('error: ', error);
     }
@@ -121,13 +160,11 @@ const App = () => {
   const linkDevice = async () => {
     try {
       const linkResult = await OkaySdk.linkTenant(linkingCode, {
-        SpaStorage: {
-          appPns: token,
-          pubPss: pubPssBase64,
-          externalId: externalId,
-          installationId: installationID,
-          enrollmentId: null,
-        },
+        appPns: token,
+        pubPss: pubPssBase64,
+        externalId: externalId,
+        installationId: installationID,
+        enrollmentId: null,
       });
       console.log('linkResult: ', linkResult);
     } catch (error) {
@@ -137,13 +174,11 @@ const App = () => {
   const unlinkDevice = async () => {
     try {
       const unlinkResult = await OkaySdk.unlinkTenant(tenantId, {
-        SpaStorage: {
-          appPns: token,
-          pubPss: pubPssBase64,
-          externalId: externalId,
-          installationId: installationID,
-          enrollmentId: null,
-        },
+        appPns: token,
+        pubPss: pubPssBase64,
+        externalId: externalId,
+        installationId: installationID,
+        enrollmentId: null,
       });
       console.log('unlinkRes: ', unlinkResult);
     } catch (error) {
